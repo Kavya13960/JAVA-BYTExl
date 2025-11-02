@@ -1,0 +1,101 @@
+import java.io.*;
+import java.util.*;
+
+class PartA {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Integer> numbers = new ArrayList<>();
+        System.out.println("Enter integers (type 'end' to stop):");
+        while (true) {
+            String input = sc.next();
+            if (input.equalsIgnoreCase("end")) break;
+            numbers.add(Integer.parseInt(input));
+        }
+        int sum = 0;
+        for (Integer num : numbers) sum += num;
+        System.out.println("Sum of integers: " + sum);
+    }
+}
+
+class Student implements Serializable {
+    int studentID;
+    String name;
+    String grade;
+    Student(int studentID, String name, String grade) {
+        this.studentID = studentID;
+        this.name = name;
+        this.grade = grade;
+    }
+}
+
+class PartB {
+    public static void main(String[] args) throws Exception {
+        Student s = new Student(101, "Riya", "A");
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("student.ser"));
+        oos.writeObject(s);
+        oos.close();
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("student.ser"));
+        Student obj = (Student) ois.readObject();
+        ois.close();
+        System.out.println("Student ID: " + obj.studentID);
+        System.out.println("Name: " + obj.name);
+        System.out.println("Grade: " + obj.grade);
+    }
+}
+
+class Employee {
+    String name, id, designation;
+    double salary;
+    Employee(String name, String id, String designation, double salary) {
+        this.name = name;
+        this.id = id;
+        this.designation = designation;
+        this.salary = salary;
+    }
+    public String toString() {
+        return id + "," + name + "," + designation + "," + salary;
+    }
+}
+
+class PartC {
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        File file = new File("employees.txt");
+        while (true) {
+            System.out.println("1. Add Employee\n2. Display All Employees\n3. Exit");
+            int choice = sc.nextInt();
+            if (choice == 1) {
+                System.out.print("Enter ID: ");
+                String id = sc.next();
+                System.out.print("Enter Name: ");
+                String name = sc.next();
+                System.out.print("Enter Designation: ");
+                String desig = sc.next();
+                System.out.print("Enter Salary: ");
+                double sal = sc.nextDouble();
+                Employee e = new Employee(name, id, desig, sal);
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+                bw.write(e.toString());
+                bw.newLine();
+                bw.close();
+            } else if (choice == 2) {
+                if (!file.exists()) {
+                    System.out.println("No records found.");
+                    continue;
+                }
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] data = line.split(",");
+                    System.out.println("ID: " + data[0] + ", Name: " + data[1] + ", Designation: " + data[2] + ", Salary: " + data[3]);
+                }
+                br.close();
+            } else if (choice == 3) {
+                System.out.println("Exiting...");
+                break;
+            } else {
+                System.out.println("Invalid choice");
+            }
+        }
+    }
+}
